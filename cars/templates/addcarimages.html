@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}
+Add-Car
+{% endblock title %}
+{% block main %}
+<div class="container my-5">
+    <h1 class="text-center my-3 text-warning">Add Car Images</h1>
+    <form method="post" action="/cars/addcarimg/{{carid}}" enctype="multipart/form-data">
+        <input type="number" class="form-control" name="noofimage" id="inputGroupFile01"  value="{{noofimage}}" hidden> 
+      {% csrf_token %}
+      {% for no in no_of_image %}
+        <div class="input-group mb-3">
+            <label class="input-group-text" for="inputGroupFile01">Upload {{no}}</label>
+            <input type="file" class="form-control" name="carimage{{no}}"  id="inputGroupFile01">
+        </div>
+      {% endfor %}
+      <button type="submit" class="btn my-3 btn-outline-warning p-3">Add</button>
+      </form>
+
+</div>
+{% endblock main %}

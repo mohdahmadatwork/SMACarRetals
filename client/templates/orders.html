@@ -1,0 +1,87 @@
+{% extends "base.html" %} 
+{% load tz %}
+{% block title %} 
+Previous-Orders 
+{% endblock title %} 
+   
+{% block main %}
+<main>
+    {% if groupname == "client" %}
+    <h1 class="text-center p-2 ">Previous Orders you made:-</h1>
+    {% else %}
+    <h1 class="text-center p-2 ">Previous Orders you got:-</h1>
+    {% endif %}
+    <div class="row w-100 ">
+        {% for order in orders %}
+            <div class="card col-4 my-3 mx-auto d-flex" style="width: 18rem;">
+                
+                <div id="carouselExampleSlidesOnly" class="carousel slide my-2" data-bs-ride="carousel" >
+                    <div class="carousel-inner">
+                        {% for image in order.car.images.all %}
+                            {% if forloop.counter == 1 %}
+                            <div class="carousel-item active" style="height: 30vh;">
+                                <img src="{{image.images.url}}" class="d-block w-100 " alt="car-image" >
+                            </div>
+                            {% else %}
+                            <div class="carousel-item " style="height: 30vh;">
+                                <img src="{{image.images.url}}" class="d-block w-100 " alt="car-image" >
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleSlidesOnly" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleSlidesOnly" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
+                </div>
+                {% if order.return_b %}
+                    <span class="position-absolute top-0 translate-middle badge rounded-pill bg-success" style="left:94%;">
+                        Returned
+                        <span class="visually-hidden">Return Status</span>
+                    </span>
+                {% elif order.cancel_b %}
+                    <span class="position-absolute top-0 translate-middle badge rounded-pill bg-warning " style="left:94%;">
+                        Cancelled
+                        <span class="visually-hidden">Return Status</span>
+                    </span>
+                {% else %}
+                    <span class="position-absolute top-0 translate-middle badge rounded-pill bg-danger" style="left:96%;">
+                        Rented
+                        <span class="visually-hidden">Return Status</span>
+                    </span>
+                {% endif %}
+                <div class="card-body">
+                <h3 class="text-center">{{order.id}}</h3>
+                <h5 class="card-title">{{order.car.company}}</h5>
+                <p class="card-text mb-0">Model:- {{order.car.model}}</p>
+                <p class="card-text mb-0">Rent Price:- {{order.car.rent_price}}</p>
+                <p class="card-text ">Car Number:- <strong>{{order.car.car_number}}</strong></p>
+                <p class="card-text ">{{order.to_date}} {{ date_now}}</p>
+                <div class="container d-flex justify-content-between">
+                    
+                    
+                    <a href="/orders/detail/{{order.id}}" class="btn btn-outline-warning py-2 px-4">Details {{now}} </a>
+                    {% if order.to_date|date:"U" > date_now|date:"U" and order.cancel_b == False %}
+                        <a href="/orders/cancel/{{order.id}}" class="btn btn-outline-warning py-2 px-4" class="btn btn-primary" >Cancel</a>
+                    {% else %}
+                        {% if groupname == "client" %}
+                            <a href="/orders/re_rent/{{order.id}}" class="btn btn-outline-warning py-2 px-4" class="btn btn-primary" >Re-Rent</a>
+                        {% else %}
+                            <a data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-outline-warning py-2 px-4">Return</a>
+                        {% endif %}
+                    {% endif %}
+                    
+                </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+
+    
+</main>
+{% endblock main %}

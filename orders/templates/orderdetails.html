@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}
+Order-{{order.pk}}
+{% endblock title %}
+{% block main %}
+<script>
+    setInterval(function(){ 
+  let currentDateTime = new Date();
+  document.getElementById("current_time").innerHTML = currentDateTime.toLocaleString();
+}, 1000);
+
+function printDiv(divId) {
+        var printContents = document.getElementById(divId).innerHTML;
+        var originalContents = document.body.innerHTML;
+        document.body.innerHTML = printContents;
+        window.print();
+        document.body.innerHTML = originalContents;
+    }
+
+</script>
+<main>
+    <div class="container">
+        <div class="container my-5 ">
+            <div class="card mb-3 p-2" >
+                <div class="row g-0">
+                <div class="col-md-5">
+                    <div id="carouselExampleSlidesOnly" class="carousel slide my-2" data-bs-ride="carousel" >
+                        <div class="carousel-inner">
+                            {% for image in order.car.images.all %}
+                                {% if forloop.counter == 1 %}
+                                <div class="carousel-item active" style="height: 60vh;">
+                                    <img src="{{image.images.url}}" class="d-block w-100  " alt="car-image" >
+                                </div>
+                                {% else %}
+                                <div class="carousel-item " style="height: 60vh;">
+                                    <img src="{{image.images.url}}" class="d-block w-100  " alt="car-image" >
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleSlidesOnly" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleSlidesOnly" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-7">
+                    <div class="card-body">
+                        <div id="printable-div">
+                            <h3 class="card-title text-center">Order ID :- {{order.id}}</h3>
+                            <hr>
+                            <p class="card-text text-center "><strong>Car Detail</strong></p>
+                            <p class="card-text mb-0">company:- {{order.car.company}}</p>
+                            <p class="card-text mb-0">Model:- {{order.car.model}}</p>
+                            <p class="card-text mb-0">Rent Price:- {{order.price}}</p>
+                            <p class="card-text ">Car Number:- <strong>{{order.car.car_number}}</strong></p>
+                            <hr>
+                            <p class="card-text text-center "><strong>Dates</strong></p>
+                            <p class="card-text ">Booked On:- <strong>{{order.book_date}}</strong></p>
+                            <p class="card-text ">Rented From:- <strong>{{order.from_date}}</strong></p>
+                            <p class="card-text ">Rented From:- <strong>{{order.to_date}}</strong></p>
+                                {% if order.cancel_b %}
+                                    {% for cancel in order.cancelorder_set.all %}
+                                        <p class="card-text ">Cacncelled on:- <strong>{{cancel.cancel_date}}</strong></p>
+                                    {% endfor %}   
+                                {% else %}
+                            {% endif %}
+                            <hr>
+                            <p class="card-text text-center "><strong>Address</strong></p>
+                            <p class="card-text ">Local:- <strong>{{order.tennant_address}}</strong></p>
+                            <p class="card-text ">State:- <strong>{{order.state}}</strong></p>
+                            <p class="card-text ">City:- <strong>{{order.city}}</strong></p>
+                            <p class="card-text ">Zip:- <strong>{{order.zip}}</strong></p>
+                            <hr>
+                            <div class="d-md-flex justify-content-between align-items-center ">
+                                <div class="d-inline">
+                                    <p class="card-text text-center "><strong>Booked By</strong></p>
+                                    <p class="card-text ">Name:- <strong>{{order.tennant.first_name}}</strong></p>
+                                    <p class="card-text ">Email:- <strong>{{order.tennant.email}}</strong></p>
+                                </div>
+                                <hr class="mt-5 d-md-none">
+                                <div class="vr d-none d-md-block "></div>
+                                <div class="d-inline">
+                                    <p class="card-text text-center "><strong>Car Owner</strong></p>
+                                    <p class="card-text ">Name:- <strong>{{order.car.owner.first_name}}</strong></p>
+                                    <p class="card-text ">Email:- <strong>{{order.car.owner.email}}</strong></p>
+                                </div>
+                            </div>
+                        <p class="card-text mt-5"><small class="text-muted" id="current_time"></small></p>
+                        </div>
+                        <button type="button" class=" btn btn-outline-success px-4 py-2" onclick="printDiv('printable-div')">Print Reciept</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock main %}

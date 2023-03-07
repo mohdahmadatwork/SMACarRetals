@@ -1,0 +1,131 @@
+{% extends "base.html" %} 
+{% block title %} 
+Profile 
+{% endblock title %} 
+{% block main %}
+<main class=" my-3">
+  <div class=" d-sm-flex">
+    <div class="d-md-flex flex-column">
+      <div class="d-inline">
+        <img id="profileimgpre" src="{{profile.images.url}}" class=" rounded-circle m-2" width="150" height="150" alt="Profile-Image">
+      </div>
+      <div class="d-inline">
+        <img src="{{add.dl.url}}" class=" rounded-circle m-2" width="150" height="150" alt="Profile-Image">
+      </div>
+    </div>
+    <div class="container mt-3">
+      <h1>Credentials:-</h1>
+      <form method="post" action="/user/signup/">
+      {% csrf_token %}
+        <div class="row">
+          <div class="form-group col-md-6">
+            <label for="inputEmail4">Email</label>
+            <input type="email" name="email" value="{{user.email}}" class="form-control" id="inputEmail4" placeholder="Email">
+          </div>
+          <div class="form-group col-md-6">
+            <label for="inputPassword4">Password</label>
+            <input type="password" name="password" class="form-control" id="inputPassword4" placeholder="Password">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="inputAddress">Name</label>
+          <input type="text" name="name" value="{{user.first_name}}" class="form-control" id="inputAddress" placeholder="Mohd Ahmad">
+        </div>
+        <div class="form-group">
+          <label for="inputAddress2">Address</label>
+          <input type="text" name="address" value="{{add.tennant_address}}" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor">
+        </div>
+        <div class="row">
+          <div class="form-group col-md-6">
+            <label for="inputCity">City</label>
+            <input type="text" name="city" class="form-control" value="{{add.city}}" id="inputCity">
+          </div>
+          <div class="form-group col-md-4">
+            <label for="inputState">State</label>
+            <input type="text" name="state" class="form-control" value="{{add.state}}" id="inputZip">
+          </div>
+          <div class="form-group col-md-2">
+            <label for="inputState">Zip</label>
+            <input type="number" name="zip" class="form-control" value="{{add.zip}}" id="Zip">
+          </div>
+          <div class="form-group col-md-10">
+            <label for="inputState">Profile</label>
+            <input type="file" class="form-control" name="profileimage"  id="profileimg">
+          </div>
+          <div class="form-group col-md-2">
+            <label for="inputZip">User Type</label>
+            <select id="inputState" name="usertype" class="form-control">
+                {% if usertype.name == "teenant" %}
+                <option selected="" value="tenant">Tenant</option>
+                {% else %}
+                <option value="tenant">Tenant</option>
+                {% endif %}
+                {% if usertype.name == "owner" %}
+                <option selected="" value="owner">Owner</option>
+                {% else %}
+                <option value="owner">Owner</option>
+                {% endif %}
+
+            </select>
+          </div>
+          <div class="form-group col">
+            <label for="inputDL">DL {{dl.name}}</label>
+            <input type="file" placeholder="{{dl}}" class="form-control" name="DL"  id="DL">
+          </div>
+        </div>
+        <button type="submit" class="btn my-3 btn-outline-warning">Save Changes</button>
+      </form>
+    </div>
+  </div>
+  {% if usertype.name == "owner" %}
+  <hr>
+  <div class="container ">
+    <h1 class="text-warning"><strong>Your Cars:-</strong></h1>
+    <div class="my-3 row justify-content-between ">
+        {% for car in cars %}
+        <div class="card col-3 my-3 " style="width: 18rem;">
+            
+            <div id="carouselExampleSlidesOnly" class="carousel slide my-2" data-bs-ride="carousel" >
+                <div class="carousel-inner">
+                    {% for image in car.images.all %}
+                        {% if forloop.counter == 1 %}
+                        <div class="carousel-item active" style="height: 30vh;">
+                            <img src="{{image.images.url}}" class="d-block w-100 " alt="car-image" >
+                        </div>
+                        {% else %}
+                        <div class="carousel-item " style="height: 30vh;">
+                            <img src="{{image.images.url}}" class="d-block w-100 " alt="car-image" >
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleSlidesOnly" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleSlidesOnly" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="card-body">
+              <h5 class="card-title">{{car.company}}</h5>
+              <p class="card-text mb-0">Model:- {{car.model}}</p>
+              <p class="card-text mb-0">Rent Price:- {{car.rent_price}}</p>
+              <p class="card-text ">Car Number:- <strong>{{car.car_number}}</strong></p>
+              <div class="row">
+                <a href="/cars/{{car.id}}" class="btn mb-2 btn-outline-warning py-2 px-4">Details</a>
+                <a href="/cars/delete/{{car.id}}" class="btn mb-2 btn-outline-warning py-2 px-4">Delete</a>
+                <a href="/cars/edit/{{car.id}}" class="btn btn-outline-warning py-2 px-4">Edit</a>
+              </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+  </div>
+  {% else %}
+  {% endif %}
+</main>
+
+{% endblock main %}

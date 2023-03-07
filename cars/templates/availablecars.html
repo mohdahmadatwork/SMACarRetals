@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+Available-Cars
+{% endblock title %}
+{% block main %}
+<div class="container ">
+    {% if groupname == "owner" %}
+        <h1 class = "text-warning mt-3" >Your Cars:-</h1>
+    {% else %}
+        <h1 class = "text-warning mt-3" >Available Cars:-</h1>
+    {% endif %}
+    <div class="my-3 row justify-content-between">
+        {% for car in cars %}
+        <div class="card col-3 my-3 mx-auto " style="width: 18rem;">
+            
+            <div id="carouselExampleSlidesOnly" class="carousel slide my-2" data-bs-ride="carousel" >
+                <div class="carousel-inner">
+                    {% for image in car.images.all %}
+                        {% if forloop.counter == 1 %}
+                        <div class="carousel-item active" style="height: 30vh;">
+                            <img src="{{image.images.url}}" class="d-block w-100 " alt="car-image" >
+                        </div>
+                        {% else %}
+                        <div class="carousel-item " style="height: 30vh;">
+                            <img src="{{image.images.url}}" class="d-block w-100 " alt="car-image" >
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleSlidesOnly" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleSlidesOnly" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="card-body">
+              <h5 class="card-title">{{car.company}}</h5>
+              <p class="card-text mb-0">Model:- {{car.model}}</p>
+              <p class="card-text mb-0">Rent Price:- {{car.rent_price}}</p>
+              <p class="card-text ">Car Number:- <strong>{{car.car_number}}</strong></p>
+              {% if groupname == "owner" %}
+                <div class="row">
+                    <a href="/cars/{{car.id}}" class="btn mb-2 btn-outline-warning py-2 px-4">Details</a>
+                    <a href="/cars/delete/{{car.id}}" class="btn mb-2 btn-outline-warning py-2 px-4">Delete</a>
+                    <a href="/cars/edit/{{car.id}}" class="btn btn-outline-warning py-2 px-4">Edit</a>
+                </div>
+              {% else %}
+                <div class="container d-flex justify-content-between">
+                    <a href="/cars/{{car.id}}" class="btn btn-outline-warning py-2 px-4">Details</a>
+                    <a href="/orders/{{car.id}}" class="btn btn-outline-warning py-2 px-4">Rent</a>
+                </div>
+              {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock main %}
