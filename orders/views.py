@@ -24,7 +24,9 @@ def make_order(request,id):
             order.city = request.POST["city"]
             order.state = request.POST["state"]
             order.zip = request.POST["zip"]
-            if(len(request.FILES['dl'])!=0):
+            for key, value in request:
+                print(f"Key: {key}, Value: {value}")
+            if(request.FILES['dl']):
                 order.dl = request.FILES["dl"]
                 order.car.availablity=False
                 order.car.save()
