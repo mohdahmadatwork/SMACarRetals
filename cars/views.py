@@ -5,6 +5,9 @@ from django.dispatch import receiver
 from django.contrib import messages
 from cars.forms import CarImagesForm
 from client.models import tennantaddress
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 def available_cars(request):
     if not request.user.is_authenticated:
@@ -85,6 +88,32 @@ def delete_car(request,id):
         messages.error(request,"This Car is not yours")
         return redirect("/user/")
 
+def delete_car_image(request,id):
+    try:
+        car_image = Car_Images.objects.get(id=id)
+        print(car_image)
+        car_image.delete()
+        message = {"message":True}
+        return JsonResponse(message)
+    except Car_Images.DoesNotExist:
+        message = {"message":False}
+        return JsonResponse(message)
+    except:
+        message = {"message":False}
+        return JsonResponse(message)
+    
+@csrf_exempt
+def upload_image(request):
+    if request.method == 'POST':
+        car_id = request.POST.get('car_id')
+        car = Car.objects.get(id=car_id)
+        for i in range(len(request.FILES)):
+            nameOfImage = 'image'+str(i)
+            image_file = request.FILES[nameOfImage]
+            uploaded_image = Car_Images.objects.create(images=image_file,car = car)
+        return JsonResponse({'status': 'success', 'image_url': uploaded_image.images.url})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'No image file received.','image_files':request.FILES})
 
 def edit_car(request,id):
     car = Car.objects.get(id=id)
@@ -102,7 +131,8 @@ def edit_car(request,id):
             car.noofimage=request.POST["noofimage"]
             car.noofimage = int(car.noofimage)
             car.save()
-            return render(request,"addcarimages.html",{"no_of_image":range(int(car.noofimage)),"carid":car.id,"noofimage":str(car.noofimage)})
+            messages.success(request,"Car saved successfully.")
+            return redirect("/")
         else:
             messages.error(request,"You are not authorised")
             return redirect("/")

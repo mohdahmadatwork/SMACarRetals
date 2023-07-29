@@ -5,11 +5,28 @@ Add-Car
 {% block main %}
 <div class="container my-5">
     <h1 class="text-center my-3 text-warning">Add Car to rent it out</h1>
+    <div>
+      <div class="d-flex flex-wrap justify-content-center" id="imageContainer">
+        {% for image in car.images.all %}
+          <div class="m-2" id ="car_img_{{image.id}}">
+            <div class="position-relative">
+              <img src="{{image.images.url}}" alt="car image">
+            <span onclick="delete_Car_image({{image.id}})" style="cursor: pointer;" class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger">X</span>
+            </div>        
+          </div>
+        {% endfor %}
+      </div>
+      <div>
+        <button class="btn my-3 btn-outline-warning p-3" onclick="addImage()">Add Image</button>
+      </div>
+    </div>
+    
     <form method="post" action="/cars/edit/{{car.id}}">
       {% csrf_token %}
         <div class="row">
           <div class="form-group col-md-6">
             <label for="inputEmail4">Company</label>
+            <input type="number" value="{{car.id}}" name="car_id" class="form-control" id="car_id" style="display:none;">
             <input type="text" value="{{car.company}}" name="company" class="form-control" id="inputEmail4" placeholder="Email">
           </div>
           <div class="form-group col-md-6">
@@ -31,15 +48,142 @@ Add-Car
             <input type="text"  value="{{add.city}}" name="city" class="form-control" id="inputCity">
           </div>
           <div class="form-group col-md-4">
-            <label for="inputState">No of Photos</label>
-            <input type="number" value="{{numberofphotos}}"  name="noofimage" class="form-control" id="inputZip" placeholder="Enter the number of photos you want to enter">
+            <label for="noOfPhotos">No of Photos</label>
+            <input type="number" value="{{numberofphotos}}"  name="noofimage" class="form-control" id="noOfPhotos" placeholder="Enter the number of photos you want to enter" disabled>
           </div>
           <div class="form-group col-md-2">
             <label for="inputZip">Rent Price</label>
             <input type="number" value="{{car.rent_price}}" name="rent_price" class="form-control" id="inputZip">
           </div>
         </div>
-        <button type="submit" class="btn my-3 btn-outline-warning p-3">Save Changes</button>
+        <button type="submit" class="btn my-3 btn-outline-warning p-3" onclick="save()">Save Changes</button>
       </form>
 </div>
+<script>
+  var deleteCarImgArray = [];
+  const images = []; // Array to store selected images
+  function deleteCarImage(index) {
+    let id = index;
+    //console.log(index,id);
+    document.getElementById(id).remove();
+    // Remove the image from the images array
+    images.splice(index, 1);
+    let noOfPhotos = $("#noOfPhotos").val();
+    document.getElementById("noOfPhotos").value = parseInt(noOfPhotos)-1;
+    
+  }
+  function showImagePreview(file) {
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      const imageContainer = document.getElementById('imageContainer');
+  
+      // Create a new container div for the image
+      const imageDiv = document.createElement('div');
+      imageDiv.className = 'm-2';
+      imageDiv.style.position = "relative";
+      const imageId = imageDiv.id = 'car_n_images_'+images.length;
+  
+      // Create a new image element and set its attributes
+      const imgElement = document.createElement('img');
+      imgElement.src = event.target.result;
+      imgElement.alt = 'car image';
+  
+      // Create a delete button for the image
+      const deleteButton = document.createElement('span');
+      deleteButton.className = 'position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger';
+      deleteButton.style.cursor = 'pointer';
+      deleteButton.innerText = 'X';
+  
+      // Attach the delete function to the button's click event
+      deleteButton.onclick = function() {
+        deleteCarImage(imageId);
+      };
+  
+      // Append the image and delete button to the container div
+      imageDiv.appendChild(imgElement);
+      imageDiv.appendChild(deleteButton);
+  
+      // Append the container div to the main image container
+      imageContainer.appendChild(imageDiv);
+      let noOfPhotos = $("#noOfPhotos").val();
+      document.getElementById("noOfPhotos").value = parseInt(noOfPhotos)+1;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function addImage(event) {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
+    fileInput.addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      images.push(file);
+      showImagePreview(file);
+    });
+    fileInput.click();
+  }
+
+  function saveImages() {
+    if (images.length === 0) {
+      console.log('No images to save.');
+      return;
+    }
+  
+    const formData = new FormData();
+    images.forEach((image, index) => {
+      formData.append(`image${index}`, image); // Use a unique key for each image (e.g., image0, image1, ...)
+    });
+    const currentDomain = window.location.origin;
+    const fullURL = currentDomain + "/cars/upload_car_image/";
+    let car_id = $('#car_id').val();
+    formData.append('car_id',car_id)
+    fetch(fullURL, {
+      method: 'POST',
+      body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+      // Handle the response from the backend, e.g., show success message or handle errors
+      console.log('Response from backend:', data);
+    })
+    .catch(error => {
+      // Handle any errors that occurred during the request
+      console.error('Error sending images:', error);
+    });
+  }
+
+  function delte_car_img_db(){
+    if(deleteCarImgArray.length>0){
+      console.log("152",deleteCarImgArray);
+      const currentDomain = window.location.origin;
+      const fullURL = currentDomain + "/cars/delete_car_image/";
+      deleteCarImgArray.forEach(image_id=>{
+        fetch(fullURL+image_id)
+        .then(data => {
+          console.log(data);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+      });
+    }
+  }
+  function delete_Car_image(id){
+    let flag = confirm("Do you really want to delte this image?");
+    if(flag){
+      let img_div_id = "car_img_"+id;
+      deleteCarImgArray.push(id);
+      $("#"+img_div_id).css("display","none");
+      let noOfPhotos = $("#noOfPhotos").val();
+      document.getElementById("noOfPhotos").value = parseInt(noOfPhotos)-1;
+      //console.log("133"+deleteCarImgArray);
+    }
+  }
+
+  function save(){
+    delte_car_img_db();
+    saveImages();
+    event.preventDefault();
+  }
+</script>
 {% endblock main %}

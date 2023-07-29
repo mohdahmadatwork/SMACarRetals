@@ -61,7 +61,7 @@ Previous-Orders
                 <p class="card-text mb-0">Rent Price:- {{order.car.rent_price}}</p>
                 <p class="card-text ">Car Number:- <strong>{{order.car.car_number}}</strong></p>
                 <p class="card-text ">{{order.to_date}} {{ date_now}}</p>
-                <div class="container d-flex justify-content-between">
+                <div class="d-flex justify-content-between">
                     
                     
                     <a href="/orders/detail/{{order.id}}" class="btn btn-outline-warning py-2 px-4">Details {{now}} </a>
@@ -69,7 +69,7 @@ Previous-Orders
                         <a href="/orders/cancel/{{order.id}}" class="btn btn-outline-warning py-2 px-4" class="btn btn-primary" >Cancel</a>
                     {% else %}
                         {% if groupname == "client" %}
-                            <a href="/orders/re_rent/{{order.id}}" class="btn btn-outline-warning py-2 px-4" class="btn btn-primary" >Re-Rent</a>
+                            <a href="/orders/re_rent/{{order.id}}" class="btn btn-outline-success py-2 px-4" class="btn btn-primary" >Re-Rent</a>
                         {% else %}
                             <a data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-outline-warning py-2 px-4">Return</a>
                         {% endif %}
