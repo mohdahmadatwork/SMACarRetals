@@ -7,7 +7,11 @@ class Client_images(models.Model):
     images = models.ImageField(upload_to='Client/image')
     user = models.ForeignKey(User,on_delete=models.CASCADE)
 
-
+class Profile(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    email_token = models.CharField(max_length=2000)
+    is_verified = models.BooleanField(default=False)
+    
 class tennantaddress(models.Model):
     tennant = models.ForeignKey(User,on_delete=models.CASCADE)
     tennant_address = models.CharField(max_length=300)

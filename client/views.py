@@ -8,6 +8,7 @@ from orders.models import Order
 from client.models import tennantaddress,Client_images
 import datetime
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.hashers import make_password
 
 # Create your views here.
 def dashboard(request):
@@ -32,9 +33,9 @@ def dashboard(request):
             tenAdd.zip = zip
             tenAdd.save()
             client = request.user
-            client.username = email
+            client.username = client.email = email
             client.first_name = name
-            client.password = password
+            client.password = make_password(password)
             client.save()
             messages.success(request,"Profile successfully updated")
             return redirect('/user/')
@@ -73,7 +74,7 @@ def handlesignup(request):
         state = request.POST["state"]
         city = request.POST["city"]
         zip = request.POST["zip"]
-        user = User(first_name=name,username=email,password=password,email=email)
+        user = User(first_name=name,username=email,password=make_password(password),email=email)
         user.save()
         useradd = tennantaddress(tennant=user,tennant_address = address ,state = state ,city = city ,zip = zip)
         if "dlimage" in request.FILES:
