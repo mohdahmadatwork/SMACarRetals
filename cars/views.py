@@ -104,17 +104,24 @@ def delete_car_image(request,id):
     
 @csrf_exempt
 def upload_image(request):
-    if request.method == 'POST':
-        car_id = request.POST.get('car_id')
-        car = Car.objects.get(id=car_id)
-        for i in range(len(request.FILES)):
-            nameOfImage = 'image'+str(i)
-            image_file = request.FILES[nameOfImage]
-            uploaded_image = Car_Images.objects.create(images=image_file,car = car)
-        return JsonResponse({'status': 'success', 'image_url': uploaded_image.images.url})
+    if(request.user.is_authenticated):
+        if request.method == 'POST':
+            car_id = request.POST.get('car_id')
+            car = Car.objects.get(id=car_id)
+            if(car.owner != request.user):
+                messages.error(request,"Something went wrong!")
+                return redirect('/cars/') 
+            for i in range(len(request.FILES)):
+                nameOfImage = 'image'+str(i)
+                image_file = request.FILES[nameOfImage]
+                uploaded_image = Car_Images.objects.create(images=image_file,car = car)
+            return JsonResponse({'status': 'success', 'image_url': uploaded_image.images.url})
+        else:
+            return JsonResponse({'status': 'error', 'message': 'No image file received.','image_files':request.FILES})
     else:
-        return JsonResponse({'status': 'error', 'message': 'No image file received.','image_files':request.FILES})
-
+        messages.error(request,"Something went wrong!")
+        return redirect('/cars/') 
+    
 def edit_car(request,id):
     car = Car.objects.get(id=id)
     user = request.user

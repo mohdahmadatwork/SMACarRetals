@@ -7,15 +7,44 @@ from django.contrib.auth.models import Group
 from orders.models import Order
 from client.models import tennantaddress,Client_images
 import datetime
+from django.views.decorators.csrf import csrf_exempt
+
 # Create your views here.
 def dashboard(request):
     if(request.user.is_authenticated):
-        user = request.user
-        image = Client_images.objects.filter(user=user).get()
-        add = user.tennantaddress_set.all().get()
-        usertype = user.groups.all().get()
-        cars = user.car_set.all()
-        return render(request,"clientdashboard.html",{"user":user,"add":add,"usertype":usertype,"profile":image,"cars":cars})
+        if(request.method == 'POST'):
+            client_id = request.POST["client_id"]
+            email = request.POST["email"]
+            if User.objects.filter(username__exact=email).exclude(id=client_id).exists():
+                messages(request,"Choose different username!")
+                return redirect('/user/')
+            password = request.POST["password"]
+            name = request.POST["name"]
+            address = request.POST["address"]
+            city = request.POST["city"]
+            state = request.POST["state"]
+            zip = request.POST["zip"]
+            usertype = request.POST["usertype"]
+            tenAdd = tennantaddress.objects.get(tennant=request.user)
+            tenAdd.tennant_address = address
+            tenAdd.city = city
+            tenAdd.state = state
+            tenAdd.zip = zip
+            tenAdd.save()
+            client = request.user
+            client.username = email
+            client.first_name = name
+            client.password = password
+            client.save()
+            messages.success(request,"Profile successfully updated")
+            return redirect('/user/')
+        else:    
+            user = request.user
+            image = Client_images.objects.filter(user=user).get()
+            add = user.tennantaddress_set.all().get()
+            usertype = user.groups.all().get()
+            cars = user.car_set.all()
+            return render(request,"clientdashboard.html",{"user":user,"add":add,"usertype":usertype,"profile":image,"cars":cars})
     else:
         return redirect("/user/login/")
 def handlelogin(request):
@@ -27,7 +56,7 @@ def handlelogin(request):
         if user is not None:
             login(request , user)
             messages.success(request,"You are loged in as "+username)
-            return redirect('/')
+            return redirect('/user/')
         else:
             messages.error(request,"Invalid Credentials")
             return redirect('/')
@@ -82,6 +111,37 @@ def handlelogout(request):
     logout(request)
     messages.success(request,"Logout Successfully")
     return redirect('/')
+
+@csrf_exempt
+def editDlProfile(request):
+    if(request.user.is_authenticated):
+        if request.method=='POST' and request.FILES.get('image'):
+            print("107 ")
+            print(request.POST["title"])
+            image_file = request.FILES.get('image')
+            client_id = request.POST["client_id"]
+            client = User.objects.get(id=client_id)
+            if(request.user!=client):
+                handlelogout()
+                messages.error(request,"Something went wrong")
+                return redirect('/')
+            if(request.POST["title"]=="Driving License"):
+                tenAdd = tennantaddress.objects.get(tennant = client)
+                tenAdd.dl = image_file
+                tenAdd.save()
+                messages.success(request,"DL image successfully updated")
+                return redirect('/user/')
+            client_image_obj = Client_images.objects.get(user=client)
+            client_image_obj.delete()
+            client_image_obj = Client_images.objects.create(images=image_file,user=client)
+            messages.success(request,"profile image successfully updated")
+            return redirect('/user/')
+        else:
+            messages.error(request,"Something went wrong!")
+            return redirect('/user/')
+    else:
+        messages.error(request,"Please Login!")
+        return redirect('/login/')
 
 
 def previousorderuserside(request):

@@ -7,18 +7,19 @@ Profile
   <div class=" d-sm-flex">
     <div class="d-md-flex flex-column">
       <div class="d-inline">
-        <img id="profileimgpre" src="{{profile.images.url}}" class=" rounded-circle m-2" width="150" height="150" alt="Profile-Image">
+        <img id="profileimgpre" src="{{profile.images.url}}" class=" rounded-circle m-2" width="120" height="120" alt="Profile-Image" title="Profile Image" style="cursor:pointer;" onclick="imageInBigScreen(this)">
       </div>
       <div class="d-inline">
-        <img src="{{add.dl.url}}" class=" rounded-circle m-2" width="150" height="150" alt="Profile-Image">
+        <img src="{{add.dl.url}}" class=" rounded-circle m-2" width="120" height="120" alt="Driving-License" title="Driving License" style="cursor:pointer;" onclick="imageInBigScreen(this)">
       </div>
     </div>
     <div class="container mt-3">
       <h1>Credentials:-</h1>
-      <form method="post" action="/user/signup/">
+      <form method="post" action="/user/">
       {% csrf_token %}
         <div class="row">
           <div class="form-group col-md-6">
+            <input type='hidden' value="{{user.id}}" id="client_id" name="client_id">
             <label for="inputEmail4">Email</label>
             <input type="email" name="email" value="{{user.email}}" class="form-control" id="inputEmail4" placeholder="Email">
           </div>
@@ -81,9 +82,9 @@ Profile
   <hr>
   <div class="container ">
     <h1 class="text-warning"><strong>Your Cars:-</strong></h1>
-    <div class="my-3 row justify-content-between ">
+    <div class="my-3 d-md-flex justify-content-start  ">
         {% for car in cars %}
-        <div class="card col-3 my-3 " style="width: 18rem;">
+        <div class="card my-3 mx-auto m-md-3 " style="width: 18rem;">
             
             <div id="carouselExampleSlidesOnly" class="carousel slide my-2" data-bs-ride="carousel" >
                 <div class="carousel-inner">
@@ -126,6 +127,100 @@ Profile
   </div>
   {% else %}
   {% endif %}
+
+
+  <div class="modal" tabindex="-1" id="modal" >
+    <div class="modal-dialog" style=" max-width: fit-content; max-height: fit-content;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modal_title"></h5>
+          <button type="button" onclick="dontSaveImage()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center" id="modal_body">
+          
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-warning" onclick="addImage()" id="close_delete">Edit</button>
+          <button type="button" class="btn btn-outline-success" onclick="saveImages()" id="save">Save </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function imageInBigScreen(e){
+      document.getElementById("modal_title").innerText = e.title;
+      const image = document.createElement("img");
+      image.src =  e.src;
+      image.alt = e.alt;
+      image.style.maxWidth = "80vw";   
+      image.style.maxHeight = "80vh";  
+      const imageContainer = document.getElementById("modal_body");
+      imageContainer.innerHTML =  image.outerHTML;
+      const myModal = new bootstrap.Modal('#modal', {
+        keyboard: false
+      })      
+      const modalToggle = document.getElementById('modal'); 
+      myModal.show(modalToggle);
+    }
+    var images;
+    function dontSaveImage(){
+      images='';
+    }
+    function showImagePreview(file) {
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const imageContainer = document.getElementById('modal_body');
+    
+        // Create a new container div for the image
+        const imageDiv = document.createElement('div');
+        const image = document.createElement("img");
+        image.src =  event.target.result;
+        image.alt = document.getElementById("modal_title");
+        image.style.maxWidth = "80vw";   
+        image.style.maxHeight = "80vh";
+        imageContainer.innerHTML = image.outerHTML;
+      };
+      reader.readAsDataURL(file);
+    }
+  
+    function addImage(event) {
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = 'image/*';
+      fileInput.addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        images=file;
+        showImagePreview(file);
+      });
+      fileInput.click();
+    }
+    function saveImages() {
+      if (!images) {
+        console.log('No images to save.');
+        return;
+      }
+    
+      const formData = new FormData();
+      formData.append(`image`, images);
+      const currentDomain = window.location.origin;
+      const fullURL = currentDomain + "/user/editdlprofile/";
+      let client_id = $('#client_id').val();
+      formData.append('client_id',client_id)
+      let title = $('#modal_title').text();
+      formData.append('title',title)
+      fetch(fullURL, {
+        method: 'POST',
+        body: formData,
+      });
+      const imageContainer = document.getElementById("modal_body");
+      const myModal = new bootstrap.Modal('#modal', {
+        keyboard: false
+      })      
+      const modalToggle = document.getElementById('modal'); 
+      myModal.hide(modalToggle);
+    }
+  </script>
 </main>
 
 {% endblock main %}
