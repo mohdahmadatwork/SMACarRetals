@@ -30,14 +30,14 @@ ALLOWED_HOSTS = []
 
 # SITE_ID = 1
 
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'your_smtp_server'
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = 'your_email_username'
-# EMAIL_HOST_PASSWORD = 'your_email_password'
-
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+DEFAULT_FROM_EMAIL = 'noreply<your email>'
 # ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 
 # Application definition
@@ -53,9 +53,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'django.contrib.sites',  # Required for allauth
-    # 'allauth',
-    # 'allauth.account',
+    'django.contrib.sites',  # Required for allauth
+    'allauth',
+    'allauth.account',
 ]
 
 MIDDLEWARE = [

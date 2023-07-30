@@ -5,12 +5,25 @@ from django.contrib.auth.models import User
 from django.contrib import messages 
 from django.contrib.auth.models import Group
 from orders.models import Order
-from client.models import tennantaddress,Client_images
+from client.models import tennantaddress,Client_images,Profile
 import datetime
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.hashers import make_password
-
+import uuid
+from .utils import *
 # Create your views here.
+def verifyEMail(request,token):
+    try:
+        obj = Profile.objects.get(email_token = token)
+        obj.user.is_active = True
+        obj.is_verified = True
+        obj.save()
+        login(request,obj.user)
+        messages.success(request,"Your Account is verified!")
+        return redirect('/user/')
+    except:
+        messages.success(request,"Your Account is not verified!")
+        return redirect('/')
 def dashboard(request):
     if(request.user.is_authenticated):
         if(request.method == 'POST'):
@@ -53,7 +66,10 @@ def handlelogin(request):
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(username=username,password=password)
-        print(user)
+        if(not user.is_Active):
+            messages.warning(request,"Please verify your email first")
+            return redirect('/')
+        # print(user)
         if user is not None:
             login(request , user)
             messages.success(request,"You are loged in as "+username)
@@ -68,13 +84,16 @@ def handlesignup(request):
     if request.method=="POST":
         name=request.POST["name"]
         email=request.POST["email"]
+        if User.objects.filter(username__exact=email).exists():
+            messages(request,"Choose different username!")
+            return redirect('/user/signup/')
         password=request.POST["password"]
         type = request.POST["usertype"]
         address = request.POST["address"]
         state = request.POST["state"]
         city = request.POST["city"]
         zip = request.POST["zip"]
-        user = User(first_name=name,username=email,password=make_password(password),email=email)
+        user = User(first_name=name,username=email,password=make_password(password),email=email,is_active=False)
         user.save()
         useradd = tennantaddress(tennant=user,tennant_address = address ,state = state ,city = city ,zip = zip)
         if "dlimage" in request.FILES:
@@ -102,8 +121,13 @@ def handlesignup(request):
         else:
             my_group = Group.objects.get(name='owner') 
             my_group.user_set.add(user)
-        messages.success(request,"Registered as "+name)
-        login(request,user)
+        p_obj = Profile.objects.create(
+            user = user,
+            email_token = str(uuid.uuid4())
+        )
+        print(send_email_token(email,p_obj.email_token))
+        messages.success(request,"Registered as "+name+" Please Check your Email for verification")
+        # login(request,user)
         return redirect("/")
 
     return render(request,"signup.html")  
