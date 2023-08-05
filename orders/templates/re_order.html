@@ -21,18 +21,18 @@ Make-Order
             <div class="col-6 ">
               <label for="username" class="form-label">From</label>
               <div class="input-group has-validation">
-                <input type="date" class="form-control" id="username"  placeholder="Username" required="" name="from_date">
+                <input type="date" class="form-control" id="from_date"  placeholder="Username" required="" name="from_date" date="{{cur_date}}" min="{{cur_date}}">
               <div class="invalid-feedback">
-                  Your username is required.
+                  Date is required.
                 </div>
               </div>
             </div>
             <div class="col-6">
               <label for="username" class="form-label">To</label>
               <div class="input-group has-validation">
-                <input type="date" class="form-control" id="username" placeholder="Username" required="" name="to_date">
+                <input type="date" class="form-control" min="{{cur_date}}" id="username" placeholder="Username" required="" name="to_date">
               <div class="invalid-feedback">
-                  Your username is required.
+                  Date is required.
                 </div>
               </div>
             </div>

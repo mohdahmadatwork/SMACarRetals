@@ -8,7 +8,13 @@ from django.utils import timezone
 from django.contrib.auth import authenticate,logout
 # Create your views here.
 def make_order(request,id):
+    current_date = datetime.now().date().strftime('%Y-%m-%d')
     if request.method=="POST":
+        if(datetime.strptime(order.to_date,'%Y-%m-%d')<current_date or datetime.strptime(order.from_date,'%Y-%m-%d')<current_date):
+           messages.error(request,"Kindly choose a valid date")
+           user = request.user
+           add = tennantaddress(tennant=user)
+           return render(request,"order.html",{"id":id,"add":add,"cur_date":current_date})
         user = request.user
         groups = user.groups.all()
         group=groups.get()
@@ -26,19 +32,19 @@ def make_order(request,id):
             order.zip = request.POST["zip"]
             for key, value in request:
                 print(f"Key: {key}, Value: {value}")
-            if(request.FILES['dl']):
+            if(request.FILES.get('dl')):
                 order.dl = request.FILES["dl"]
-                order.car.availablity=False
-                order.car.save()
-                order.save()
-                messages.success(request,"Car is booked")
-                return redirect("/")
+            order.car.availablity=False
+            order.car.save()
+            order.save()
+            messages.success(request,"Car is booked")
+            return redirect("/")
         else:
             messages.warning(request,"Car is unable to book")
             return redirect("/")
     user = request.user
     add = tennantaddress(tennant=user)
-    return render(request,"order.html",{"id":id,"add":add})
+    return render(request,"order.html",{"id":id,"add":add,"cur_date":current_date})
 
 def return_car(request):
     if request.method == "POST":
@@ -76,7 +82,13 @@ def order_detail(request,id):
     return render(request,"orderdetails.html",{"order":order})
 
 def re_rent(request,id):
+    current_date = datetime.now().date().strftime('%Y-%m-%d')
     if request.method=="POST":
+        if(datetime.strptime(order.to_date,'%Y-%m-%d')<current_date or datetime.strptime(order.from_date,'%Y-%m-%d')<current_date):
+           messages.error(request,"Kindly choose a valid date")
+           user = request.user
+           add = tennantaddress(tennant=user)
+           return render(request,"order.html",{"id":id,"add":add,"cur_date":current_date})
         user = request.user
         groups = user.groups.all()
         group=groups.get()
@@ -94,7 +106,7 @@ def re_rent(request,id):
                 order.state = request.POST["state"]
                 order.zip = request.POST["zip"]
                 if "dl" in request.FILES:
-                    if(len(request.FILES['dl'])!=0):
+                    if(len(request.FILES.get('dl'))!=0):
                         order.dl = request.FILES["dl"]
                 else:
                     order.dl=user.tennantaddress_set.all().get().dl
@@ -112,7 +124,7 @@ def re_rent(request,id):
     else:
         user = request.user
         previous_order = Order.objects.get(id=id)
-        return render(request,"re_order.html",{"previous_order":previous_order,"user":user})
+        return render(request,"re_order.html",{"previous_order":previous_order,"user":user,"cur_date":current_date})
 
 def cancel_order(request,id):
     order = Order.objects.get(id=id)

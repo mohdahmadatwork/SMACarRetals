@@ -10,6 +10,8 @@ class Car(models.Model):
     availablity = models.BooleanField()
     owner = models.ForeignKey(User,on_delete=models.CASCADE,default=42)
     description = models.TextField(default="")
+    fine = models.IntegerField(default=0)
+    cancel_charge = models.IntegerField(default=0)
 
 class Car_Images(models.Model):
     images = models.ImageField(upload_to="cars/images")

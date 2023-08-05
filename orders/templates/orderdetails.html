@@ -53,19 +53,32 @@ function printDiv(divId) {
                         <div id="printable-div">
                             <h3 class="card-title text-center">Order ID :- {{order.id}}</h3>
                             <hr>
-                            <p class="card-text text-center "><strong>Car Detail</strong></p>
-                            <p class="card-text mb-0">company:- {{order.car.company}}</p>
-                            <p class="card-text mb-0">Model:- {{order.car.model}}</p>
-                            <p class="card-text mb-0">Rent Price:- {{order.price}}</p>
-                            <p class="card-text ">Car Number:- <strong>{{order.car.car_number}}</strong></p>
+                            
+                            <div class="d-md-flex justify-content-evenly align-items-center ">
+                                <div class="d-inline ">
+                                    <p class="card-text text-center "><strong>Car Detail</strong></p>
+                                    <p class="card-text ">company:- {{order.car.company}}</p>
+                                    <p class="card-text ">Model:- {{order.car.model}}</p>
+                                    <p class="card-text ">Car Number:- <strong>{{order.car.car_number}}</strong></p>
+                                </div>
+                                <hr class="mt-5 d-md-none">
+                                <div class="vr d-none d-md-block "></div>
+                                <div class="d-inline ">
+                                    <p class="card-text text-center text-info"><strong>Price & Charges</strong></p>
+                                    <p class="card-text text-success">Rent Price:- &#8377;{{order.price}}</p>
+                                    <p class="card-text text-warning">Late Charges :- &#8377;{{order.price}}</p>
+                                    <p class="card-text text-danger">Cancel Charges :- &#8377;{{order.price}}</p>
+
+                                </div>
+                            </div>
                             <hr>
-                            <p class="card-text text-center "><strong>Dates</strong></p>
-                            <p class="card-text ">Booked On:- <strong>{{order.book_date}}</strong></p>
-                            <p class="card-text ">Rented From:- <strong>{{order.from_date}}</strong></p>
-                            <p class="card-text ">Rented From:- <strong>{{order.to_date}}</strong></p>
+                            <p class="card-text text-center  "><strong>Dates</strong></p>
+                            <p class="card-text text-success">Booked On:- <strong>{{order.book_date}}</strong></p>
+                            <p class="card-text">Rented From:- <strong>{{order.from_date}}</strong></p>
+                            <p class="card-text">Rented To:- <strong>{{order.to_date}}</strong></p>
                                 {% if order.cancel_b %}
                                     {% for cancel in order.cancelorder_set.all %}
-                                        <p class="card-text ">Cacncelled on:- <strong>{{cancel.cancel_date}}</strong></p>
+                                        <p class="card-text text-error">Cacncelled on:- <strong>{{cancel.cancel_date}}</strong></p>
                                     {% endfor %}   
                                 {% else %}
                             {% endif %}
@@ -76,7 +89,7 @@ function printDiv(divId) {
                             <p class="card-text ">City:- <strong>{{order.city}}</strong></p>
                             <p class="card-text ">Zip:- <strong>{{order.zip}}</strong></p>
                             <hr>
-                            <div class="d-md-flex justify-content-between align-items-center ">
+                            <div class="d-md-flex justify-content-evenly align-items-center ">
                                 <div class="d-inline">
                                     <p class="card-text text-center "><strong>Booked By</strong></p>
                                     <p class="card-text ">Name:- <strong>{{order.tennant.first_name}}</strong></p>

@@ -66,7 +66,7 @@ def handlelogin(request):
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(username=username,password=password)
-        if(not user.is_Active):
+        if(not user.is_active):
             messages.warning(request,"Please verify your email first")
             return redirect('/')
         # print(user)

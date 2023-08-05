@@ -55,12 +55,13 @@ Previous-Orders
                     </span>
                 {% endif %}
                 <div class="card-body">
-                <h3 class="text-center">{{order.id}}</h3>
                 <h5 class="card-title">{{order.car.company}}</h5>
                 <p class="card-text mb-0">Model:- {{order.car.model}}</p>
-                <p class="card-text mb-0">Rent Price:- {{order.car.rent_price}}</p>
+                <p class="card-text mb-0">Rent Price:- &#8377;{{order.car.rent_price}}</p>
                 <p class="card-text ">Car Number:- <strong>{{order.car.car_number}}</strong></p>
-                <p class="card-text ">{{order.to_date}} {{ date_now}}</p>
+                <p class="card-text mb-0 text-center">{{ date_now}}</p>
+                <p class="mb-0 text-center"> <strong>to</strong></p>
+                <p class="text-center">{{order.to_date}} </p>
                 <div class="d-flex justify-content-between">
                     
                     

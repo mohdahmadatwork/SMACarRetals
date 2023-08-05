@@ -10,7 +10,8 @@
       integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
       crossorigin="anonymous"
     />
-    
+    {% load static %}
+    <link rel="icon" type="image/png" href="{% static 'home/smarentals.png' %}" >
   </head>
   <body>
     <header class="p-3 text-bg-dark">
@@ -28,14 +29,14 @@
           <ul
             class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0"
           >
-            <li><a href="#" class="nav-link px-2 text-secondary">Home</a></li>
+            <li><a href="#" class="nav-link px-2 text-white">Home</a></li>
             <li><a href="/cars/" class="nav-link px-2 text-white">Cars</a></li>
             <li><a href="/user/previousorder/" class="nav-link px-2 text-white">Orders</a></li>
             {% if request.user.groups.all.get.name == "owner" %}
               <li><a href="/cars/addcar/" class="nav-link px-2 text-white">Add Car</a></li>
             {% else %}
             {% endif %}
-            <li><a href="#" class="nav-link px-2 text-white">About</a></li>
+            <li><a href="/about" class="nav-link px-2 text-white">About</a></li>
           </ul>
 
           
@@ -50,6 +51,7 @@
                       {% if user.is_superuser %}
                       <li><a class="dropdown-item" href="/admin/">Dashbord</a></li>
                       {% else %}
+                      <li><a class="dropdown-item" href="/user/">Dashbord</a></li>
                       <li><a class="dropdown-item" href="/cars/returncar/" data-bs-toggle="modal" data-bs-target="#exampleModal">Return Car</a></li>
                       {% endif %}
                       <li><a class="dropdown-item" href="/user/logout/">Logout</a></li>
@@ -66,6 +68,12 @@
           {% endif %}
         </div>
       </div>
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          const currentPageURL = window.location.pathname;
+          console.log(currentPageURL);
+        });
+      </script>
     </header>
           {% for message in messages %}
         <div class=" alert alert-{{message.tags}} alert-dismissible fade show mb-0" role="alert">

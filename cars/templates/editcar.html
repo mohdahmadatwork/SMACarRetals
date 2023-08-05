@@ -10,7 +10,7 @@ Add-Car
         {% for image in car.images.all %}
           <div class="m-2" id ="car_img_{{image.id}}">
             <div class="position-relative">
-              <img src="{{image.images.url}}" alt="car image">
+              <img src="{{image.images.url}}" width="300" height="168" alt="car image">
             <span onclick="delete_Car_image({{image.id}})" style="cursor: pointer;" class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger">X</span>
             </div>        
           </div>
@@ -49,7 +49,7 @@ Add-Car
           </div>
           <div class="form-group col-md-4">
             <label for="noOfPhotos">No of Photos</label>
-            <input type="number" value="{{numberofphotos}}"  name="noofimage" class="form-control" id="noOfPhotos" placeholder="Enter the number of photos you want to enter" disabled>
+            <input type="number" value="{{numberofphotos}}"  name="noofimage" class="form-control" id="noOfPhotos" placeholder="Enter the number of photos you want to enter" readonly>
           </div>
           <div class="form-group col-md-2">
             <label for="inputZip">Rent Price</label>
@@ -85,6 +85,8 @@ Add-Car
   
       // Create a new image element and set its attributes
       const imgElement = document.createElement('img');
+      imgElement.height = "168";
+      imgElement.width = "300";
       imgElement.src = event.target.result;
       imgElement.alt = 'car image';
   
@@ -169,7 +171,7 @@ Add-Car
     }
   }
   function delete_Car_image(id){
-    let flag = confirm("Do you really want to delte this image?");
+    let flag = confirm("Do you really want to delete this image?");
     if(flag){
       let img_div_id = "car_img_"+id;
       deleteCarImgArray.push(id);
@@ -183,7 +185,7 @@ Add-Car
   function save(){
     delte_car_img_db();
     saveImages();
-    event.preventDefault();
+    
   }
 </script>
 {% endblock main %}
