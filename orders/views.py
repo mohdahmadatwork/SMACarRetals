@@ -10,7 +10,9 @@ from django.contrib.auth import authenticate,logout
 def make_order(request,id):
     current_date = datetime.now().date().strftime('%Y-%m-%d')
     if request.method=="POST":
-        if(datetime.strptime(order.to_date,'%Y-%m-%d')<current_date or datetime.strptime(order.from_date,'%Y-%m-%d')<current_date):
+        from_date = request.POST["from_date"]
+        to_date = request.POST["to_date"]
+        if(datetime.strptime(to_date,'%Y-%m-%d')<datetime.strptime(current_date ,'%Y-%m-%d') or datetime.strptime(from_date,'%Y-%m-%d')<datetime.strptime(current_date ,'%Y-%m-%d')):
            messages.error(request,"Kindly choose a valid date")
            user = request.user
            add = tennantaddress(tennant=user)
@@ -22,10 +24,10 @@ def make_order(request,id):
             order = Order()
             order.car = Car.objects.get(id=id)
             order.tennant = request.user
-            order.from_date = request.POST["from_date"]
-            order.to_date = request.POST["to_date"]
+            order.from_date = from_date
+            order.to_date = to_date
             order.price_per_day = order.car.rent_price
-            order.price =(datetime.strptime(order.to_date,'%Y-%m-%d')-datetime.strptime(order.from_date,'%Y-%m-%d')).days * order.price_per_day
+            order.price =(datetime.strptime(to_date,'%Y-%m-%d')-datetime.strptime(from_date,'%Y-%m-%d')).days * order.price_per_day
             order.tennant_address = request.POST["tennant_address"]
             order.city = request.POST["city"]
             order.state = request.POST["state"]
@@ -63,6 +65,10 @@ def return_car(request):
                     car.save()
                     order.return_b=True
                     order.return_date=datetime.now()
+                    if(datetime.strftime(order.to_date,'%Y-%m-%d') < datetime.now().date().strftime('%Y-%m-%d')):
+                        order.late_charge = (datetime.strptime(order.return_date,'%Y-%m-%d')-datetime.strptime(order.to_date,'%Y-%m-%d')).days * order.price_per_day + (datetime.strptime(order.return_date,'%Y-%m-%d')-datetime.strptime(order.to_date,'%Y-%m-%d')).days * car.fine
+                        order.price = order.price + order.late_charge
+                        order.late_b = True
                     order.save()
                     messages.success(request,"Car return successfully")
                 return redirect("/cars/")
@@ -131,6 +137,8 @@ def cancel_order(request,id):
     if order.from_date > timezone.now():
         if not(order.cancel_b==True or order.return_b==True):
             order.cancel_b = True
+            order.cancel_charge = order.car.cancel_charge
+            order.price = order.cancel_charge
             order.car.availablity=True
             order.car.save()
             order.save()

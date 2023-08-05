@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from cars.models import Car,Car_Images
+from cars.models import Car,Car_Images,Caraddress
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
 from django.contrib import messages
@@ -39,15 +39,26 @@ def add_car(request):
         group=usergroup.get()
         # print(group)
         if group.name == 'owner':
-            car_number = request.POST["car_number"]
-            company = request.POST["company"]
-            model = request.POST["model"]
-            rent_price = request.POST["rent_price"]
+            
+            car=Car ()
+            car.car_number = request.POST["car_number"]
+            car.company = request.POST["company"]
+            car.model = request.POST["model"]
+            car.rent_price = request.POST["rent_price"]
             noofimage=request.POST["noofimage"]
-            noofimage = int(noofimage)
-            # print(type(noofimage))
-            car=Car (car_number=car_number,company=company,model=model,rent_price=rent_price,availablity=True,owner=request.user)
+            car.noofimage = int(noofimage)
+            car.fine = request.POST["fine"]
+            car.cancel_charge = request.POST["cancel_charge"]
+            car.owner = user
+            car.availablity = True
             car.save()
+            add = Caraddress()
+            add.car = car
+            add.tennant_address = request.POST["address"]
+            add.city = request.POST["city"]
+            add.state = request.POST["state"]
+            add.zip = request.POST["zip"]
+            add.save()
             return render(request,"addcarimages.html",{"no_of_image":range(int(noofimage)),"carid":car.id,"noofimage":str(noofimage)})
         else:
             return redirect("/")
@@ -125,7 +136,7 @@ def upload_image(request):
 def edit_car(request,id):
     car = Car.objects.get(id=id)
     user = request.user
-    add = user.tennantaddress_set.all().get()
+    add = car.caraddress_set.all().get()
     numberofphotos = car.images.all().count()
     if request.method=="POST":
         usergroup = user.groups.all()
@@ -137,7 +148,14 @@ def edit_car(request,id):
             car.rent_price = request.POST["rent_price"]
             car.noofimage=request.POST["noofimage"]
             car.noofimage = int(car.noofimage)
+            car.fine = request.POST["fine"]
+            car.cancel_charge = request.POST["cancel_charge"]
             car.save()
+            add.tennant_address = request.POST["address"]
+            add.city = request.POST["city"]
+            add.state = request.POST["state"]
+            add.zip = request.POST["zip"]
+            add.save()
             messages.success(request,"Car saved successfully.")
             return redirect("/")
         else:

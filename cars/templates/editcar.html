@@ -21,7 +21,8 @@ Add-Car
       </div>
     </div>
     
-    <form method="post" action="/cars/edit/{{car.id}}">
+    <form method="post" id="editCarForm" action="/cars/edit/{{car.id}}">
+      <input type="files" name="images[]" id="images_arr" accept="image/*" multiple style="display:none;">
       {% csrf_token %}
         <div class="row">
           <div class="form-group col-md-6">
@@ -45,18 +46,37 @@ Add-Car
         <div class="row">
           <div class="form-group col-md-6">
             <label for="inputCity">City</label>
-            <input type="text"  value="{{add.city}}" name="city" class="form-control" id="inputCity">
+            <input type="text" value="{{add.city}}" name="city" class="form-control" id="inputCity">
           </div>
+          <div class="form-group col-md-4">
+            <label for="inputState">State</label>
+            <input type="text" name="state" class="form-control" value="{{add.state}}" id="inputZip">
+          </div>
+          <div class="form-group col-md-2">
+            <label for="inputState">Zip</label>
+            <input type="number" name="zip" class="form-control" value="{{add.zip}}" id="Zip">
+          </div>
+        </div>
+        <div class="row">
+          
           <div class="form-group col-md-4">
             <label for="noOfPhotos">No of Photos</label>
             <input type="number" value="{{numberofphotos}}"  name="noofimage" class="form-control" id="noOfPhotos" placeholder="Enter the number of photos you want to enter" readonly>
           </div>
-          <div class="form-group col-md-2">
+          <div class="form-group col-md-3">
             <label for="inputZip">Rent Price</label>
             <input type="number" value="{{car.rent_price}}" name="rent_price" class="form-control" id="inputZip">
           </div>
+          <div class="form-group col-md-2">
+            <label for="inputfine">Late Charges</label>
+            <input type="number" name="fine" class="form-control" value="{{car.fine}}" id="inputfine">
+          </div>
+          <div class="form-group col-md-3">
+            <label for="cancel_charge">Cancel Charges</label>
+            <input type="number" name="cancel_charge" class="form-control" value="{{car.cancel_charge}}" id="cancel_charge">
+          </div>
         </div>
-        <button type="submit" class="btn my-3 btn-outline-warning p-3" onclick="save()">Save Changes</button>
+        <button type="submit" class="btn my-3 btn-outline-warning p-3" onclick="save(event)">Save Changes</button>
       </form>
 </div>
 <script>
@@ -125,9 +145,9 @@ Add-Car
     fileInput.click();
   }
 
-  function saveImages() {
+  async function saveImages() {
     if (images.length === 0) {
-      console.log('No images to save.');
+      console.log("No images to save.");
       return;
     }
   
@@ -137,39 +157,57 @@ Add-Car
     });
     const currentDomain = window.location.origin;
     const fullURL = currentDomain + "/cars/upload_car_image/";
-    let car_id = $('#car_id').val();
-    formData.append('car_id',car_id)
-    fetch(fullURL, {
-      method: 'POST',
+    let car_id = $("#car_id").val();
+    formData.append("car_id", car_id);
+    const response = await fetch(fullURL, {
+      method: "POST",
       body: formData,
-    })
-    .then(response => response.json())
-    .then(data => {
-      // Handle the response from the backend, e.g., show success message or handle errors
-      console.log('Response from backend:', data);
-    })
-    .catch(error => {
-      // Handle any errors that occurred during the request
-      console.error('Error sending images:', error);
     });
+    const data = await response.json();
+    // Handle the response from the backend, e.g., show success message or handle errors
+    console.log("Response from backend:", data);
   }
-
-  function delte_car_img_db(){
-    if(deleteCarImgArray.length>0){
-      console.log("152",deleteCarImgArray);
-      const currentDomain = window.location.origin;
-      const fullURL = currentDomain + "/cars/delete_car_image/";
-      deleteCarImgArray.forEach(image_id=>{
-        fetch(fullURL+image_id)
-        .then(data => {
-          console.log(data);
-        })
-        .catch(error => {
-          console.error('Error:', error);
-        });
-      });
+  
+  async function save(event) {
+    event.preventDefault();
+    try {
+      const response1 = await delete_car_img_db();
+      console.log(response1);
+      await saveImages();
+      document.getElementById("editCarForm").submit();
+    } catch (error) {
+      // Handle errors here, if any
+      console.error("Error during the save process:", error);
     }
   }
+  
+  //In this modified version, the delte_car_img_db() function is called first to delete the images from the database. Once all deletions are complete, the saveImages() function is called to save the new images. Finally, the main form is submitted after both the delete and save operations have finished. We also added error handling using try-catch to handle any potential errors that might occur during the process.
+  
+
+  async function delte_car_img_db() {
+    if (deleteCarImgArray.length > 0) {
+      console.log("152", deleteCarImgArray);
+      const currentDomain = window.location.origin;
+      const fullURL = currentDomain + "/cars/delete_car_image/";
+      const promises = deleteCarImgArray.map(image_id =>
+        fetch(fullURL + image_id)
+          .then(response => response.json())
+          .then(data => {
+            console.log(data);
+            return data; // You can return data or any value you want here
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            throw error; // You can also throw an error here if needed
+          })
+      );
+  
+      // Use Promise.all to await all fetch requests and resolve with their responses
+      const responses = await Promise.all(promises);
+      return responses; // You can return responses or any other value you need
+    }
+  }
+  
   function delete_Car_image(id){
     let flag = confirm("Do you really want to delete this image?");
     if(flag){
@@ -182,10 +220,13 @@ Add-Car
     }
   }
 
-  function save(){
-    delte_car_img_db();
-    saveImages();
-    
+  async function save(event){
+    event.preventDefault();
+    const response1 = await delte_car_img_db();
+    console.log(response1);
+    const response2 = await saveImages();
+    console.log(response2);
+    document.getElementById('editCarForm').submit(); 
   }
 </script>
 {% endblock main %}

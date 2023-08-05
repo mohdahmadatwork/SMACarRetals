@@ -65,10 +65,20 @@ function printDiv(divId) {
                                 <div class="vr d-none d-md-block "></div>
                                 <div class="d-inline ">
                                     <p class="card-text text-center text-info"><strong>Price & Charges</strong></p>
-                                    <p class="card-text text-success">Rent Price:- &#8377;{{order.price}}</p>
-                                    <p class="card-text text-warning">Late Charges :- &#8377;{{order.price}}</p>
-                                    <p class="card-text text-danger">Cancel Charges :- &#8377;{{order.price}}</p>
+                                    <p class="card-text text-success">Rent Price <small class="text-muted  text-sm">(Per Day)</small>:- &#8377;{{order.price_per_day}}</p>
+                                    {% if order.late_b %}
+                                            <p class="card-text text-warning">Late Charges :- &#8377;{{order.late_charge}}</p>
+                                        {% else %}
+                                    {% endif %}
 
+                                    {% if order.cancel_b %}
+                                            {% for cancel in order.cancelorder_set.all %}
+                                            <p class="card-text text-danger">Cancel Charges :- &#8377;{{order.cancel_charge}}</p>
+                                            {% endfor %}   
+                                        {% else %}
+                                    {% endif %}
+                                    <hr>
+                                    <p class="card-text text-info">Total Charges :- &#8377;{{order.price}}</p>
                                 </div>
                             </div>
                             <hr>

@@ -21,7 +21,7 @@ Make-Order
             <div class="col-6 ">
               <label for="username" class="form-label">From</label>
               <div class="input-group has-validation">
-                <input type="date" class="form-control" id="from_date" placeholder="to_date"  name="from_date" value ="{{cur_date}}" required="" disabled>
+                <input type="date" class="form-control" id="from_date" placeholder="to_date"  name="from_date" value ="{{cur_date}}" required="" min={{cur_date}}>
               <div class="invalid-feedback">
                   Date is required.
                 </div>

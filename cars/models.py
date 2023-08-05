@@ -16,4 +16,11 @@ class Car(models.Model):
 class Car_Images(models.Model):
     images = models.ImageField(upload_to="cars/images")
     car = models.ForeignKey(Car,related_name='images',on_delete=models.CASCADE)
+
+class Caraddress(models.Model):
+    car = models.ForeignKey(Car,on_delete=models.CASCADE)
+    tennant_address = models.CharField(max_length=300)
+    city = models.CharField(max_length=200)
+    state = models.CharField(max_length=200)
+    zip = models.IntegerField()
     

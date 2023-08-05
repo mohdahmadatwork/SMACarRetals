@@ -15,8 +15,11 @@ class Order(models.Model):
     dl = models.ImageField(upload_to="DL/images/")
     book_date = models.DateTimeField(default=timezone.now)
     return_b = models.BooleanField(default=False)
+    late_b = models.BooleanField(default=False)
     return_date = models.DateTimeField(blank=True,null=True,default=None)
     price = models.IntegerField(default=0)
+    late_charge = models.IntegerField(default=0)
+    cancel_charge = models.IntegerField(default=0)
     price_per_day= models.IntegerField(default=0)
     cancel_b = models.BooleanField(default=False)
 
