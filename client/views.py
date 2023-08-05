@@ -66,11 +66,11 @@ def handlelogin(request):
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(username=username,password=password)
-        if(not user.is_active):
-            messages.warning(request,"Please verify your email first")
-            return redirect('/')
         # print(user)
         if user is not None:
+            if(not user.is_active):
+                messages.warning(request,"Please verify your email first")
+                return redirect('/')
             login(request , user)
             messages.success(request,"You are loged in as "+username)
             return redirect('/user/')

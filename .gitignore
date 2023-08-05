@@ -2,3 +2,4 @@
 db*
 *.pyc
 */migrations/
+*/__pycache__/
