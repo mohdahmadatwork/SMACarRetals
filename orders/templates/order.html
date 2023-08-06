@@ -5,8 +5,18 @@ Make-Order
 {% block main %}
 <div class="container">
   <main>
+    
     <div class="row g-5 my-2">
-      <div class="col-md-7 col-lg-8 ">
+      <div id="overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 1; display:none;"></div>
+      <div id="spinner" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2;  display:none;">
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border text-warning" style="width: 3rem; height: 3rem; role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-7 col-lg-8 "> 
         <h4 class="mb-3">Billing address</h4>
         <form class="needs-validation"  method="post" action="/orders/{{id}}" novalidate="" enctype="multipart/form-data">
           <div class="row g-3">
@@ -21,7 +31,7 @@ Make-Order
             <div class="col-6 ">
               <label for="username" class="form-label">From</label>
               <div class="input-group has-validation">
-                <input type="date" class="form-control" id="from_date" placeholder="to_date"  name="from_date" value ="{{cur_date}}" required="" min={{cur_date}}>
+                <input type="date" onchange="checkAvailablity()" class="form-control" id="from_date" placeholder="to_date"  name="from_date" value ="{{cur_date}}" required="" min={{cur_date}}>
               <div class="invalid-feedback">
                   Date is required.
                 </div>
@@ -124,4 +134,47 @@ Make-Order
     </div>
   </main>
 </div>
+<div class="modal" tabindex="-1" id="modal" >
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p id="alert-message" class="text-danger text-center"></p>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  async function checkAvailablity(event){
+    const from_date = document.getElementById("from_date").value;
+    const car_id = "{{id}}";
+    document.getElementById("overlay").style.display = "block";
+    document.getElementById("spinner").style.display = "block";
+    const formData = new FormData();
+    formData.append("from_date",from_date)
+    formData.append("car_id",car_id)
+    const currentDomain = window.location.origin;
+    const fullURL = currentDomain + "/orders/checkavailability/";
+    const response = await fetch(fullURL, {
+      method: "POST",
+      body: formData,
+    });
+    const data = await response.json();
+    //console.log("Response from backend:", data);
+    //console.log(from_date);
+    //console.log(car_id);
+    if(data.status!=200){
+      document.getElementById("alert-message").innerText = data.message;
+      const myModal = new bootstrap.Modal('#modal', {
+        keyboard: false
+      })      
+      const modalToggle = document.getElementById('modal'); 
+      myModal.show(modalToggle);
+    }
+    document.getElementById("overlay").style.display = "none";
+    document.getElementById("spinner").style.display = "none";
+  }
+</script>
 {% endblock main %}

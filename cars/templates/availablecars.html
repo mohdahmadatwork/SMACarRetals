@@ -11,7 +11,8 @@ Available-Cars
         {% else %}
             <h1 class = "text-warning mt-3" >Available Cars:-</h1>
         {% endif %}
-        <form>
+        <form method="post" action="/cars/">
+        {% csrf_token %}
                 <div class = "row">
                     <div class="col-5 ">
                         <label for="username" class="form-label">From</label>

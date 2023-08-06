@@ -6,6 +6,8 @@ from django.contrib import messages
 from datetime import datetime
 from django.utils import timezone
 from django.contrib.auth import authenticate,logout
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 # Create your views here.
 def make_order(request,id):
     current_date = datetime.now().date().strftime('%Y-%m-%d')
@@ -17,6 +19,10 @@ def make_order(request,id):
            user = request.user
            add = tennantaddress(tennant=user)
            return render(request,"order.html",{"id":id,"add":add,"cur_date":current_date})
+        orders_for_car = Order.objects.filter(car=car, from_date__lte=from_date, to_date__gte=from_date).exists()
+        if(orders_for_car):
+            messages.error(request,"This car is not available on your time!")
+            return redirect("/orders/{id}")
         user = request.user
         groups = user.groups.all()
         group=groups.get()
@@ -47,6 +53,29 @@ def make_order(request,id):
     user = request.user
     add = tennantaddress(tennant=user)
     return render(request,"order.html",{"id":id,"add":add,"cur_date":current_date})
+@csrf_exempt
+def checkAvailability(request):
+    if request.user.is_authenticated and request.method=="POST":
+        car_id = request.POST["car_id"]
+        from_date = request.POST["from_date"]
+        if from_date:
+            car = Car.objects.get(id=car_id)
+            orders_for_car = Order.objects.filter(car=car, from_date__lte=from_date, to_date__gte=from_date).exists()
+            if(orders_for_car):
+                response = {"message":"This car is not available on your time!","status":"455"}
+                return JsonResponse(response)
+            else:
+                response = {"message":"This car is available on your time!","status":"200"}
+                return JsonResponse(response)
+
+        else:
+            response = {"message":"From Date can not be empty!","status":"400"}
+            return JsonResponse(response)
+    else:
+        response = {"message":"Not authorized!","status":"500"}
+        return JsonResponse(response)
+
+
 
 def return_car(request):
     if request.method == "POST":

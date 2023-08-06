@@ -8,17 +8,49 @@ from client.models import tennantaddress
 import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from orders.models import Order
+from datetime import datetime
 # Create your views here.
 def available_cars(request):
+    current_date = datetime.now().date().strftime('%Y-%m-%d')
     if not request.user.is_authenticated:
-        cars = Car.objects.filter(availablity = True)
+        cars = Car.objects.all()
+        if request.method == "POST":
+            from_date = request.POST["from_date"]
+            to_date = request.POST["to_date"]
+            if(datetime.strptime(to_date,'%Y-%m-%d')<datetime.strptime(current_date ,'%Y-%m-%d') or datetime.strptime(from_date,'%Y-%m-%d')<datetime.strptime(current_date ,'%Y-%m-%d')):
+                messages.error(request,"Kindly choose a valid date")
+                user = request.user
+                add = tennantaddress(tennant=user)
+                return render(request,"order.html",{"id":id,"add":add,"cur_date":current_date})
+            ordered_car_ids = Order.objects.filter(
+                from_date__lte=to_date,
+                to_date__gte=from_date
+            ).values_list('car_id', flat=True)
+            
+            cars = cars.exclude(id__in=ordered_car_ids)
         return render(request,'availablecars.html',{"cars":cars})
     else:
         user = request.user
         group = user.groups.all().get()
         groupname = group.name
         if groupname == "client":
-            cars = Car.objects.filter(availablity = True)
+            cars = Car.objects.all()
+            if request.method == "POST":
+                from_date = request.POST["from_date"]
+                to_date = request.POST["to_date"]
+                if(datetime.strptime(to_date,'%Y-%m-%d')<datetime.strptime(current_date ,'%Y-%m-%d') or datetime.strptime(from_date,'%Y-%m-%d')<datetime.strptime(current_date ,'%Y-%m-%d')):
+                    messages.error(request,"Kindly choose a valid date")
+                    user = request.user
+                    add = tennantaddress(tennant=user)
+                    return render(request,"order.html",{"id":id,"add":add,"cur_date":current_date})
+                ordered_car_ids = Order.objects.filter(
+                    from_date__lte=to_date,
+                    to_date__gte=from_date
+                ).values_list('car_id', flat=True)
+                
+                cars = cars.exclude(id__in=ordered_car_ids)
+                return render(request,'availablecars.html',{"cars":cars})
             return render(request,'availablecars.html',{"cars":cars,"groupname":groupname})
         else:
             cars = Car.objects.filter(owner=request.user)
