@@ -11,7 +11,7 @@ Add-Car
           <div class="m-2" id ="car_img_{{image.id}}">
             <div class="position-relative">
               <img src="{{image.images.url}}" width="300" height="168" alt="car image">
-            <span onclick="delete_Car_image({{image.id}})" style="cursor: pointer;" class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger">X</span>
+              <span onclick="delete_Car_image({{image.id}})" style="cursor: pointer;" class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger">X</span>
             </div>        
           </div>
         {% endfor %}
