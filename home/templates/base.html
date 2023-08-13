@@ -13,6 +13,17 @@
     {% load static %}
     <link rel="icon" type="image/png" href="{% static 'home/smarentals.png' %}" >
     <script src="https://kit.fontawesome.com/0d47fed71b.js" crossorigin="anonymous"></script>
+    <link href="../static/css/main.css/" rel="stylesheet"/>
+    <style>
+      a{
+        cursor:pointer;
+        text-decoration:none;
+        color:black;
+      }
+      a:hover{
+        color:#ffc107;
+      }
+    </style>
   </head>
   <body>
     <header class="p-3 text-bg-dark">
@@ -38,6 +49,7 @@
             {% else %}
             {% endif %}
             <li><a href="/about" class="nav-link px-2 text-white">About</a></li>
+            <li><a href="/contactus" class="nav-link px-2 text-white">Contact Us</a></li>
           </ul>
 
           
@@ -69,12 +81,6 @@
           {% endif %}
         </div>
       </div>
-      <script>
-        document.addEventListener('DOMContentLoaded', function() {
-          const currentPageURL = window.location.pathname;
-          console.log(currentPageURL);
-        });
-      </script>
     </header>
           {% for message in messages %}
         <div class=" alert alert-{{message.tags}} alert-dismissible fade show mb-0" role="alert">

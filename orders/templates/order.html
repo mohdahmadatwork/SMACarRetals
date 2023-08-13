@@ -10,7 +10,7 @@ Make-Order
       <div id="overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 1; display:none;"></div>
       <div id="spinner" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2;  display:none;">
           <div class="d-flex justify-content-center">
-            <div class="spinner-border text-warning" style="width: 3rem; height: 3rem; role="status">
+            <div class="spinner-border text-warning" style="width: 3rem; height: 3rem;" role="status">
               <span class="visually-hidden">Loading...</span>
             </div>
           </div>
@@ -31,7 +31,7 @@ Make-Order
             <div class="col-6 ">
               <label for="username" class="form-label">From</label>
               <div class="input-group has-validation">
-                <input type="date" onchange="checkAvailablity()" class="form-control" id="from_date" placeholder="to_date"  name="from_date" value ="{{cur_date}}" required="" min={{cur_date}}>
+                <input type="date" onchange="checkAvailablity()" class="form-control" id="from_date" placeholder="from_date"  name="from_date" value ="{{cur_date}}" required="" min={{cur_date}}>
               <div class="invalid-feedback">
                   Date is required.
                 </div>
@@ -40,7 +40,7 @@ Make-Order
             <div class="col-6">
               <label for="username" class="form-label">To</label>
               <div class="input-group has-validation">
-                <input type="date" class="form-control" id="to_date" placeholder="to_date" required="" name="to_date" min="{{cur_date}}">
+                <input type="date" onchange="checkAvailablity()" class="form-control" id="to_date" placeholder="to_date" required="" name="to_date" min="{{cur_date}}">
               <div class="invalid-feedback">
                   Date is required.
                 </div>
@@ -149,11 +149,14 @@ Make-Order
 <script>
   async function checkAvailablity(event){
     const from_date = document.getElementById("from_date").value;
+    let to_date = document.getElementById("to_date").value;
+    to_date = to_date?to_date:from_date
     const car_id = "{{id}}";
     document.getElementById("overlay").style.display = "block";
     document.getElementById("spinner").style.display = "block";
     const formData = new FormData();
     formData.append("from_date",from_date)
+    formData.append("to_date",to_date)
     formData.append("car_id",car_id)
     const currentDomain = window.location.origin;
     const fullURL = currentDomain + "/orders/checkavailability/";

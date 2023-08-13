@@ -45,7 +45,16 @@ Car
               <p class="card-text mb-0">Email:- <strong>{{car.owner.email}}</strong></p>
 
               <p class="card-text mt-4"><small class="text-muted">Last updated 3 mins ago</small></p>
-              <a href="/orders/{{car.id}}"><button type="button" class=" btn btn-outline-success px-4 py-2">Rent</button></a>
+              {% if groupname == "owner" %}
+                <div class="row">
+                    <a href="/cars/delete/{{car.id}}" class="btn mb-2 mx-2 btn-outline-warning py-2 px-4 col-md-2">Delete</a>
+                    <a href="/cars/edit/{{car.id}}" class="btn mb-2 mx-2 btn-outline-warning py-2 px-4 col-md-2">Edit</a>
+                </div>
+              {% else %}
+                <div class="container d-flex justify-content-between">
+                    <a href="/orders/{{car.id}}" class="btn btn-outline-warning py-2 px-4">Rent</a>
+                </div>
+              {% endif %}
             </div>
           </div>
         </div>

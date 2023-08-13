@@ -66,7 +66,7 @@ Previous-Orders
                     
                     
                     <a href="/orders/detail/{{order.id}}" class="btn btn-outline-warning py-2 px-4">Details {{now}} </a>
-                    {% if order.to_date|date:"U" > date_now|date:"U" and order.cancel_b == False %}
+                    {% if order.to_date|date:"U" > date_now|date:"U" and order.cancel_b == False and return_b == False%}
                         <a href="/orders/cancel/{{order.id}}" class="btn btn-outline-warning py-2 px-4" class="btn btn-primary" >Cancel</a>
                     {% else %}
                         {% if groupname == "client" %}

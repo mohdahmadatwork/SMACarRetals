@@ -10,6 +10,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from orders.models import Order
 from datetime import datetime
+from django.db.models import Q
 # Create your views here.
 def available_cars(request):
     current_date = datetime.now().date().strftime('%Y-%m-%d')
@@ -25,10 +26,14 @@ def available_cars(request):
                 return render(request,"order.html",{"id":id,"add":add,"cur_date":current_date})
             ordered_car_ids = Order.objects.filter(
                 from_date__lte=to_date,
-                to_date__gte=from_date
+                to_date__gte=from_date,
+                cancel_b = False
+            ).filter(
+                Q(return_b=True) | Q(return_b=False, return_date__isnull=True)
             ).values_list('car_id', flat=True)
-            
             cars = cars.exclude(id__in=ordered_car_ids)
+            return render(request,'availablecars.html',{"cars":cars,"from_date":from_date,"to_date":to_date})
+
         return render(request,'availablecars.html',{"cars":cars})
     else:
         user = request.user
@@ -46,11 +51,14 @@ def available_cars(request):
                     return render(request,"order.html",{"id":id,"add":add,"cur_date":current_date})
                 ordered_car_ids = Order.objects.filter(
                     from_date__lte=to_date,
-                    to_date__gte=from_date
+                    to_date__gte=from_date,
+                    cancel_b = False
+                ).filter(
+                    Q(return_b=True) | Q(return_b=False, return_date__isnull=True)
                 ).values_list('car_id', flat=True)
                 
                 cars = cars.exclude(id__in=ordered_car_ids)
-                return render(request,'availablecars.html',{"cars":cars})
+                return render(request,'availablecars.html',{"cars":cars,"from_date":from_date,"to_date":to_date})
             return render(request,'availablecars.html',{"cars":cars,"groupname":groupname})
         else:
             cars = Car.objects.filter(owner=request.user)
@@ -60,6 +68,13 @@ def available_cars(request):
 
 def car_detail(request,str):
     car = Car.objects.get(pk=str)
+    if request.user.is_authenticated:
+        user = request.user
+        group = user.groups.all().get()
+        groupname = group.name
+        return render(request,"detailcar.html",{"car":car,"groupname":groupname})
+    else:
+        return render(request,"detailcar.html",{"car":car,"groupname":"client"})
     return render(request,"detailcar.html",{"car":car})
 
 def add_car(request):
