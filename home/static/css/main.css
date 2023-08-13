@@ -304,6 +304,9 @@
     margin-bottom: 20px;
     border-radius: 20px;
 }
+.bar{
+    background-color: black !important;
+}
 
 .skillset ul li span{
     display: block;
