@@ -125,7 +125,7 @@ def handlesignup(request):
             user = user,
             email_token = str(uuid.uuid4())
         )
-        print(send_email_token(email,p_obj.email_token))
+        print(send_email_token(email,p_obj.email_token,name,email))
         messages.success(request,"Registered as "+name+" Please Check your Email for verification")
         # login(request,user)
         return redirect("/")
