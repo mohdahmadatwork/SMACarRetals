@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block main %}
 <div class="container-fluid" id="contactpage">
-      <form class="row g-3 container-fluid py-5" action="/contactus/" method="post">
+      <form class="row g-3 container-fluid pt-5" action="/contactus/" method="post">
             {% csrf_token %}
             <div class="col-md-6">
                 <label for="inputEmail4" class="form-label fw-bold">Email</label>
@@ -23,6 +23,20 @@
                 <button type="submit" class="btn btn-outline-warning">Contact Us</button>
             </div>
         </form>
+        <div class="container d-flex text-center justify-content-center flex-column" style="width:100%; height:150px;" >
+            <div class="d-block mb-5">
+              <h3>Contact Developer</h3>
+            </div>
+            <div class="d-flex justify-content-between">
+              <a class="" target="_blank" href="{{developer.linkedin}}"><i class="link fa-brands fa-linkedin-in fa-2xl" title="LinkedIn"></i></a>
+              <a class="" target="_blank" href="{{developer.github}}"><i class="link fa-brands fa-github fa-2xl" title="Git Hub"></i></a>
+              <a class="" target="_blank" href="{{developer.twitter}}"><i class="link fa-brands fa-x-twitter fa-2xl" title="X"></i></a>
+              <a class="" target="_blank" href="{{developer.resume}}"><i class="link fa-solid fa-file fa-2xl" title="Web Resume"></i></a>
+              <a class="" target="_blank" href="{{developer.medium}}"><i class="fa-brands fa-medium fa-2xl" title="medium"></i></a>
+              <a class="" target="_blank" href="mailto:{{developer.mail}}"><i class="link fa-regular fa-envelope fa-2xl" title="Email"></i></a>
+            </div>
+            <hr>
+        </div>
 </div>
 {% endblock main %}
 {% block title %}

@@ -3,26 +3,22 @@
 Home
 {% endblock title %}
 {% block main %}
-<div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-  <div class="carousel-inner">
-    <div class="carousel-item active">
-        {% load static %}
-      <img src="{% static 'home/1.jpg' %}" class="d-block w-100" alt="...">
-    </div>
-    <div class="carousel-item">
-      <img src="{% static 'home/1.jpg' %}" class="d-block w-100" alt="...">
-    </div>
-    <div class="carousel-item">
-      <img src="{% static 'home/1.jpg' %}" class="d-block w-100" alt="...">
-    </div>
+{% load static %}
+<div class="" style="position:relative; width:100%; height:100%;">
+  <img src="{% static 'home/1.jpg' %}" class="d-block w-100" alt="...">
+  <div class="text-center text-warning" style="position:absolute; top:35%; left:50%; transform: translate(-50%, -50%); z-index: 1;">
+    <h1>SMACarRentals</h1>
+    <span class="typeeffect"></span>
   </div>
-  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
-    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Previous</span>
-  </button>
-  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
-    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Next</span>
-  </button>
 </div>
 {% endblock main %}
+{% block script %}
+  $(document).ready(function(){
+    $(".typeeffect").typed({
+      strings: ["Start Your Adventure with SMACarRentals - Your Road, Your Rules.","Ready, Set, Go! Your Dream Car Awaits - Start Your Reservation Now.","Seamless Travels Ahead: Your Gateway to Exceptional Car Rentals."],
+      typeSpeed:100,
+      loop:true,
+      backSpeed:50
+    })
+  });
+{% endblock script %}

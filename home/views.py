@@ -11,6 +11,7 @@ def about(request):
     return render(request,"about.html",{"developer":developer})
 
 def contactusf(request):
+    developer =  admincontact.objects.get()
     if request.method=="POST":
         mail = request.POST["email"]
         name = request.POST["name"]
@@ -24,4 +25,4 @@ def contactusf(request):
         contactForm.save()
         messages.success(request,"We will be back to you!")
         return redirect("/contactus")
-    return render(request,"contactus.html")
+    return render(request,"contactus.html",{"developer":developer})

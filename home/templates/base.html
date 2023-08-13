@@ -93,7 +93,7 @@
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+              <h1 class="modal-title fs-5" id="exampleModalLabel">Return Car</h1>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -110,7 +110,7 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="submit"  class="btn btn-primary">Save changes</button>
+              <button type="submit"  class="btn btn-outline-danger">Return</button>
             </div>
             </form>
           </div>
@@ -120,64 +120,64 @@
       <footer class="py-5">
         <div class="row">
           <div class="col-6 col-md-2 mb-3">
-            <h5>Section</h5>
+            <h5>SMACarRentals</h5>
             <ul class="nav flex-column">
               <li class="nav-item mb-2">
-                <a href="#" class="nav-link p-0 text-muted">Home</a>
+                <a  href="/" class="nav-link p-0 text-muted">Home</a>
               </li>
               <li class="nav-item mb-2">
-                <a href="#" class="nav-link p-0 text-muted">Features</a>
+                <a href="/cars/"  class="nav-link p-0 text-muted">Cars</a>
               </li>
               <li class="nav-item mb-2">
-                <a href="#" class="nav-link p-0 text-muted">Pricing</a>
+                <a href="/user/previousorder/"  class="nav-link p-0 text-muted">Orders</a>
               </li>
               <li class="nav-item mb-2">
-                <a href="#" class="nav-link p-0 text-muted">FAQs</a>
+                <a href="/about/" class="nav-link p-0 text-muted" >About</a>
               </li>
               <li class="nav-item mb-2">
-                <a href="#" class="nav-link p-0 text-muted">About</a>
+                <a href="/contactus/" class="nav-link p-0 text-muted" >Contact Us</a>
               </li>
             </ul>
           </div>
 
           <div class="col-6 col-md-2 mb-3">
-            <h5>Section</h5>
+            <h5>Other Projects</h5>
             <ul class="nav flex-column">
               <li class="nav-item mb-2">
-                <a href="#" class="nav-link p-0 text-muted">Home</a>
+                <a target="_blank" href="#" class="nav-link p-0 text-muted">ToDoBySMA</a>
               </li>
               <li class="nav-item mb-2">
-                <a href="#" class="nav-link p-0 text-muted">Features</a>
+                <a target="_blank" href="#" class="nav-link p-0 text-muted">DiaryBySMA</a>
               </li>
               <li class="nav-item mb-2">
-                <a href="#" class="nav-link p-0 text-muted">Pricing</a>
+                <a href="#" target="_blank" class="nav-link p-0 text-muted">BlogBySMA</a>
               </li>
               <li class="nav-item mb-2">
-                <a href="#" class="nav-link p-0 text-muted">FAQs</a>
+                <a href="https://ahmad9652.github.io/TextUtils/" class="nav-link p-0 text-muted" target="_blank">TextUtilsBySMA</a>
               </li>
               <li class="nav-item mb-2">
-                <a href="#" class="nav-link p-0 text-muted">About</a>
+                <a href="#" target="_blank" class="nav-link p-0 text-muted">SMA Discuss</a>
               </li>
             </ul>
           </div>
 
           <div class="col-6 col-md-2 mb-3">
-            <h5>Section</h5>
+            <h5>Developer</h5>
             <ul class="nav flex-column">
               <li class="nav-item mb-2">
-                <a href="#" class="nav-link p-0 text-muted">Home</a>
+                <a target="_blank" href="https://ahmad9652.github.io/resume/" class="nav-link p-0 text-muted">Resume</a>
               </li>
               <li class="nav-item mb-2">
-                <a href="#" class="nav-link p-0 text-muted">Features</a>
+                <a target="_blank" href="https://www.linkedin.com/in/mohd-ahmad-seemapuri/" class="nav-link p-0 text-muted">LinkedIn</a>
               </li>
               <li class="nav-item mb-2">
-                <a href="#" class="nav-link p-0 text-muted">Pricing</a>
+                <a target="_blank" href="https://github.com/ahmad9652" class="nav-link p-0 text-muted">Git Hub</a>
               </li>
               <li class="nav-item mb-2">
-                <a href="#" class="nav-link p-0 text-muted">FAQs</a>
+                <a target="_blank" href="https://twitter.com/mohdahmadatwork" class="nav-link p-0 text-muted">X (Twitter)</a>
               </li>
               <li class="nav-item mb-2">
-                <a href="#" class="nav-link p-0 text-muted">About</a>
+                <a target="_blank" href="https://medium.com/@ahmadseemapuri" class="nav-link p-0 text-muted">Medium</a>
               </li>
             </ul>
           </div>
@@ -207,7 +207,7 @@
         <div
           class="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top"
         >
-          <p>© 2022 Company, Inc. All rights reserved.</p>
+          <p>© 2023 Company, Inc. All rights reserved.</p>
           <ul class="list-unstyled d-flex">
             <li class="ms-3">
               <a class="link-dark" href="#"
@@ -238,6 +238,7 @@
     ></script>
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.3.min.js" crossorigin="anonymous"></script>
     <script type="text/javascript" src="https://cdn.bootcss.com/typed.js/1.1.4/typed.min.js" diff></script>
-    <script src="../static/js/main.js"></script>
+    <script>{% block script %}{% endblock script %}</script>
+
   </body>
 </html>
